@@ -1,0 +1,299 @@
+SITE_NAME,SITE_ID,LOCATION_LAT,LOCATION_LONG
+ARM-AMF3-Oliktok,S-A03,70.4953,-149.8823
+ARM-NSA-Barrow,US-A10,71.3242,-156.6149
+ARM-SGP Medford hay pasture,US-A32,36.8193,-97.8198
+ARM-SGP-Morrison,US-A39,36.3776,-96.069
+ARM SGP milo field,US-A74,36.8085,-97.5489
+Acton Lake Flux Tower Site,US-Act,39.582,-84.755
+Amargosa Desert Research Site (ADRS),US-ADR,36.7653,-116.6933
+Aiken,US-Akn,33.3833,-81.5656
+Allequash Creek Site,US-ALQ,46.0308,-89.6067
+Anaktuvuk River Severe Burn,US-An1,68.99,-150.28
+Anaktuvuk River Moderate Burn,US-An2,68.95,-150.21
+Anaktuvuk River Unburned,US-An3,68.93,-150.27
+ARM USDA UNL OSU Woodward Switchgrass 1,US-AR1,36.4267,-99.42
+ARM USDA UNL OSU Woodward Switchgrass 2,US-AR2,36.6358,-99.5975
+ARM Southern Great Plains burn site- Lamont,US-ARb,35.5497,-98.0402
+ARM Southern Great Plains control site- Lamont,US-ARc,35.5465,-98.04
+ARM Southern Great Plains site- Lamont,US-ARM,36.6058,-97.4888
+Atqasuk,US-Atq,70.4696,-157.4089
+Audubon Research Ranch,US-Aud,31.5907,-110.5104
+Bartlett Experimental Forest,US-Bar,44.0646,-71.2881
+Burdette Farm Rice Field - AWD,US-BdA,35.8089,-90.0327
+Burdette Farm Rice Field - conventional,US-BdC,35.8089,-90.0284
+Barrow Environmental Observatory (BEO) tower,US-Beo,71.281,-156.6123
+Barrow-Bes (Biocomplexity Experiment South tower),US-Bes,71.2809,-156.5965
+Bouldin Island Alfalfa,US-Bi1,38.1022,-121.5042
+Bouldin Island corn,US-Bi2,38.109,-121.535
+Brookings,US-Bkg,44.3453,-96.8362
+Black Hills,US-Blk,44.158,-103.65
+Blodgett Forest,US-Blo,38.8953,-120.6328
+"Bonanza Creek, 1920 Burn site near Delta Junction",US-Bn1,63.9198,-145.3782
+"Bonanza Creek, 1987 Burn site near Delta Junction",US-Bn2,63.9198,-145.3782
+"Bonanza Creek, 1999 Burn site near Delta Junction",US-Bn3,63.9227,-145.7442
+Bondville,US-Bo1,40.0062,-88.2904
+Bondville (companion site),US-Bo2,40.009,-88.29
+Brooks Field Site 10- Ames,US-Br1,41.9749,-93.6906
+Brooks Field Site 1011- Ames,US-Br2,41.9757,-93.6925
+Brooks Field Site 11- Ames,US-Br3,41.9747,-93.6936
+Bayles Road Grassland Tower,US-BRG,39.2167,-86.5406
+NEON Bartlett Experimental Forest (BART),US-BRT,44.0639,-71.2873
+Barrow,US-Brw,71.3225,-156.6092
+Burns Sagebrush,US-Bsg,43.4712,-119.6909
+Barnstable Great Marsh,US-BSM,41.7297,-70.3644
+Canaan Valley,US-CaV,39.0633,-79.4208
+Cedar Bridge,US-Ced,39.8379,-74.3791
+CAF-LTAR Cook East,US-CF1,46.7815,-117.0821
+CAF-LTAR Cook West,US-CF2,46.784,-117.0908
+CAF-LTAR Boyd North,US-CF3,46.7551,-117.1261
+CAF-LTAR Boyd South,US-CF4,46.7518,-117.1285
+Chestnut Ridge,US-ChR,35.9311,-84.3324
+Central Marsh,US-Cms,71.3202,-156.6223
+Corral Pocket,US-Cop,38.09,-109.39
+Chimney Park,US-CPk,41.068,-106.1187
+NEON Central Plains Experimental Range (CPER),US-CPR,40.8155,-104.7456
+Curtice Walter-Berger cropland,US-CRT,41.6285,-83.3471
+Central Sands Irrigated Agricultural Field,US-CS1,44.1031,-89.5379
+Crossett Experimental Forest,US-Cst,33.0442,-91.9204
+Cottonwood,US-Ctn,43.95,-101.8466
+Coweeta,US-Cwt,35.0592,-83.4275
+"Sierra Critical Zone, Sierra Transect, Oak/Pine Woodland, San Joaquin Experimental Range",US-CZ1,37.1088,-119.7313
+"Sierra Critical Zone, Sierra Transect, Ponderosa Pine Forest, Soaproot Saddle",US-CZ2,37.0311,-119.2566
+"Sierra Critical Zone, Sierra Transect, Sierran Mixed Conifer, P301",US-CZ3,37.0674,-119.1951
+"Sierra Critical Zone, Sierra Transect, Subalpine Forest, Shorthair",US-CZ4,37.0675,-118.9867
+California UC ANR Desert Research and Extension Center Alfalfa,US-Dea,32.8136,-115.4423
+California UC ANR Desert Research and Extension Center Urban Farm Tower,US-Deu,32.8056,-115.4456
+Diablo,US-Dia,37.6773,-121.5296
+Fort Dix,US-Dix,39.9712,-74.4346
+Duke Forest-open field,US-Dk1,35.9712,-79.0934
+Duke Forest-hardwoods,US-Dk2,35.9736,-79.1004
+Duke Forest - loblolly pine,US-Dk3,35.9782,-79.0942
+Eden Landing Ecological Reserve,US-EDN,37.6156,-122.114
+Everglades (long hydroperiod marsh),US-Elm,25.5519,-80.7826
+"Eight Mile Lake Permafrost thaw gradient, Healy Alaska.",US-EML,63.8784,-149.2536
+Everglades (short hydroperiod marsh),US-Esm,25.4379,-80.5946
+Flagstaff - Managed Forest,US-Fmf,35.1426,-111.7273
+Fort Peck,US-FPe,48.3077,-105.1019
+Freeman Ranch- Grassland,US-FR1,29.93,-98.01
+Freeman Ranch- Mesquite Juniper,US-FR2,29.9495,-97.9962
+Freeman Ranch- Woodland,US-FR3,29.94,-97.99
+Flagstaff - Unmanaged Forest,US-Fuf,35.089,-111.762
+Flagstaff - Wildfire,US-Fwf,35.4454,-111.7718
+GLEES Brooklyn Tower,US-GBT,41.3658,-106.2397
+GLEES,US-GLE,41.3665,-106.2399
+Great Mountain Forest,US-GMF,41.9667,-73.2333
+Goodwin Creek,US-Goo,34.2547,-89.8735
+Harvard Forest EMS Tower (HFR1),US-Ha1,42.5378,-72.1715
+Harvard Forest Hemlock Site,US-Ha2,42.5393,-72.1779
+NEON Harvard Forest (HARV),US-HAR,42.5369,-72.1727
+North Inlet Crab Haul Creek,US-HB1,33.3455,-79.1957
+Hobcaw Barony Mature Longleaf Pine,US-HB2,33.3242,-79.244
+Hubbard Brook Experimental Forest,US-HBK,43.9397,-71.7181
+Hanford 300 Area,US-Hn1,46.4089,-119.275
+Hanford 100H grassland,US-Hn2,46.6889,-119.4641
+Hanford 100H sagebrush,US-Hn3,46.6878,-119.4615
+Howland Forest (main tower),US-Ho1,45.2041,-68.7402
+Howland Forest (west tower),US-Ho2,45.2091,-68.747
+Howland Forest (harvest site),US-Ho3,45.2072,-68.725
+Hawk Property,US-HPY,40.7692,-74.0853
+Humnoke Farm Rice Field - AWD,US-HRA,34.5833,-91.748
+Humnoke Farm Rice Field - conventional,US-HRC,34.5857,-91.7475
+Herring River Phragmites,US-HRP,41.938,-70.0552
+Humnoke Carr South Rice Field,US-HRS,34.5922,-91.7138
+Happy Valley,US-HVa,69.1423,-148.8412
+Happy Valley Wet Sedge Tundra,US-HVs,69.1672,-148.8569
+Fermi National Accelerator Laboratory- Batavia (Agricultural site),US-IB1,41.8593,-88.2227
+Fermi National Accelerator Laboratory- Batavia (Prairie site),US-IB2,41.8406,-88.241
+Imnavait Creek Watershed Heath Tundra,US-ICh,68.6068,-149.2958
+Imnavait Creek Watershed Wet Sedge Tundra,US-ICs,68.6058,-149.311
+Imnavait Creek Watershed Tussock Tundra,US-ICt,68.6063,-149.3041
+Ivotuk,US-Ivo,68.4865,-155.7503
+NEON Jones Ecological Research Center (JERC),US-JER,31.1948,-84.4686
+KCMP Tall Tower,US-KCM,44.6886,-93.0728
+Konza Prairie LTER (4B),US-KFB,39.0745,-96.5951
+Kansas Field Station,US-KFS,39.0561,-95.1907
+KBS Lux Arbor Reserve Corn,US-KL1,42.4847,-85.4422
+KBS Lux Arbor Reserve Switchgrass,US-KL2,42.4767,-85.4467
+KBS Lux Arbor Reserve Prairie,US-KL3,42.4736,-85.4474
+Kansas Land Institute,US-KLS,38.7745,-97.5684
+KBS Marshall Farms Corn,US-KM1,42.4376,-85.3288
+KBS Marshall Farms Prairie,US-KM2,42.444,-85.3104
+KBS Marshall Farms Switchgrass,US-KM3,42.444,-85.3098
+KBS Marshall Farms Smooth Brome Grass (Ref),US-KM4,42.4423,-85.3301
+NEON Konza Prairie Biological Station (KONZ),US-KNZ,39.1008,-96.5631
+Konza Prairie LTER (KNZ),US-Kon,39.0824,-96.5603
+Kennedy Space Center (slash pine),US-KS1,28.4583,-80.6709
+Kennedy Space Center (scrub oak),US-KS2,28.6086,-80.6715
+Kennedy Space Center (salt marsh),US-KS3,28.7085,-80.7427
+Kennedy Space Center (Spartina marsh),US-KS4,28.6,-80.7207
+KUOM tower,US-KUO,44.9984,-93.1884
+KUOM Turfgrass Field,US-KUT,44.995,-93.1863
+Pointe-aux-Chenes Brackish Marsh,US-LA1,29.5013,-90.4449
+Salvador WMA Freshwater Marsh,US-LA2,29.8587,-90.2869
+Barataria Bay Saline Marsh,US-LA3,29.4936,-89.9153
+NEON LBJ National Grassland (CLBJ),US-LBJ,33.4012,-97.57
+Lockney Grassland,US-LGr,34.1377,-101.4787
+Lindcove Orange Orchard,US-Lin,36.3566,-119.8423
+Longleaf Pine - Baker (Mesic site),US-LL1,31.2792,-84.5329
+Longleaf Pine - Dubignion (Intermediate site),US-LL2,31.201,-84.4449
+Longleaf Pine - Red Dirt (Xeric site),US-LL3,31.2688,-84.4787
+Lost Creek,US-Los,46.0827,-89.9792
+Little Prospect Hill,US-LPH,42.5419,-72.185
+Little Washita Watershed,US-LWW,34.9604,-97.9789
+Metolius - Eyerly burn,US-Me1,44.5794,-121.5
+Metolius mature ponderosa pine,US-Me2,44.4523,-121.5574
+Metolius-second young aged pine,US-Me3,44.3154,-121.6078
+Metolius-old aged ponderosa pine,US-Me4,44.4992,-121.6224
+Metolius-first young aged pine,US-Me5,44.4372,-121.5668
+Metolius Young Pine Burn,US-Me6,44.3233,-121.6078
+"Lake Mendota, Center for Limnology Site",US-Men,43.0773,-89.403
+Montana Judith Basin wheat field,US-Mj1,46.9948,-109.6138
+Montana Judith Basin summer fallow field,US-Mj2,46.9957,-109.6295
+Morgan Monroe State Forest,US-MMS,39.3232,-86.4131
+Missouri Ozark Site,US-MOz,38.7441,-92.2
+Mountainair Pinyon-Juniper Woodland,US-Mpj,34.4385,-106.2377
+Mary's River (Fir) site,US-MRf,44.6465,-123.5515
+Marsh Resource Meadowlands Mitigation Bank,US-MRM,40.8164,-74.0435
+Mayberry Wetland,US-Myb,38.0498,-121.7651
+NC_Clearcut,US-NC1,35.8118,-76.7119
+NC_Loblolly Plantation,US-NC2,35.803,-76.6685
+NC_Clearcut#3,US-NC3,35.799,-76.656
+NC_AlligatorRiver,US-NC4,35.7879,-75.9038
+Mead - irrigated continuous maize site,US-Ne1,41.1651,-96.4766
+Mead - irrigated maize-soybean rotation site,US-Ne2,41.1649,-96.4701
+Mead - rainfed maize-soybean rotation site,US-Ne3,41.1797,-96.4397
+NGEE Barrow,US-NGB,71.28,-156.6092
+NGEE Arctic Council,US-NGC,64.8614,-163.7008
+Northern Michigan Jack Pine Stand,US-NMj,46.6465,-88.5194
+NEON Northern Great Plains Research Laboratory (NOGP),US-NOG,46.7697,-100.9154
+Niwot Ridge Forest (LTER NWT1),US-NR1,40.0329,-105.5464
+Niwot Ridge Forest (USGS site),US-NR2,40.0325,-105.5469
+Nisqually reference,US-Nrf,47.0935,-122.6927
+Nisqually restoring,US-Nrs,47.0936,-122.7079
+NEON Niwot Ridge Mountain Research Station (NIWO),US-NWT,40.0543,-105.5824
+Osceola Farm Rice Field - SW,US-OF1,35.7371,-90.0492
+Osceola Farm Rice Field - NW,US-OF2,35.7406,-90.0489
+Oak Openings,US-Oho,41.5545,-83.8438
+NEON Onaqui-Ault (ONAQ),US-ONA,40.1776,-112.4524
+Olentangy River Wetland Research Park,US-ORv,40.0201,-83.0183
+NEON Ordway-Swisher Biological Station (OSBS),US-OSB,29.6893,-81.9934
+Old Woman Creek,US-OWC,41.3795,-82.5125
+Park Falls/WLEF,US-PFa,45.9459,-90.2723
+Plum Island High Marsh,US-PHM,42.7423,-70.8301
+Plum Island Low Marsh,US-PLM,42.7423,-70.8301
+"Lake Mendota, Picnic Point Site",US-Pnp,43.0896,-89.4158
+Ponca City,US-Pon,36.7667,-97.1333
+Poker Flat Research Range Black Spruce Forest,US-Prr,65.1237,-147.4876
+Cook Agronomy Farm - No Till,US-RC1,46.7837,-117.0777
+Cook Agronomy Farm - Conventional Till,US-RC2,46.7776,-117.0807
+WSU Lind Dryland Research Station,US-RC3,46.991,-118.598
+Moscow Mountain on-farm site,US-RC4,46.758,-116.949
+Moses Lake on-farm site,US-RC5,47.01,-119.248
+RockyFlats - East site,US-RFE,39.8771,-105.169
+RockyFlats - West site,US-RFW,39.8751,-105.2184
+RCEW Low Sagebrush,US-Rls,43.1439,-116.7356
+RCEW Mountain Big Sagebrush,US-Rms,43.0645,-116.7486
+Rosemount- G21,US-Ro1,44.7143,-93.0898
+Rosemount- C7,US-Ro2,44.7288,-93.0888
+Rosemount- G19,US-Ro3,44.7217,-93.0893
+Rosemount Prairie,US-Ro4,44.6781,-93.0723
+Rosemount I18_South,US-Ro5,44.691,-93.0576
+Rosemount I18_North,US-Ro6,44.6946,-93.0578
+Rice Rivers Center Marsh,US-RRC,37.3344,-77.2065
+Reynolds Creek Wyoming big sagebrush,US-Rws,43.1675,-116.7132
+Sag River,US-Sag,69.5131,-148.5676
+Sweet Briar Land-Atmosphere Research Station,US-SB1,37.5734,-79.0848
+Sweet Briar Grass,US-SB2,37.5607,-79.0883
+Sweet Briar Clearcut,US-SB3,37.5752,-79.0872
+Southern California Climate Gradient - Desert Chaparral,US-SCc,33.6094,-116.4505
+Southern California Climate Gradient - Sonoran Desert,US-SCd,33.6518,-116.3721
+Southern California Climate Gradient - Oak/Pine Forest,US-SCf,33.8079,-116.7717
+Southern California Climate Gradient - Grassland,US-SCg,33.7365,-117.6946
+Southern California Climate Gradient - Coastal Sage,US-SCs,33.7343,-117.696
+Southern California Climate Gradient - Pinyon/Juniper Woodland,US-SCw,33.6047,-116.4527
+Nebraska SandHills Dry Valley,US-SdH,42.0693,-101.4072
+South Denver Urban Tower,US-SDU,39.6594,-105.0127
+Sevilleta grassland,US-Seg,34.3623,-106.702
+NEON Smithsonian Environmental Research Center (SERC),US-SER,38.8901,-76.56
+Sevilleta shrubland,US-Ses,34.3349,-106.7442
+Sioux Falls Portable,US-SFP,43.2408,-96.902
+Sagehen Creek Field Station,US-SHC,39.4315,-120.2398
+Shidler- Oklahoma,US-Shd,36.9333,-96.6833
+Secaucus High School Site,US-SHS,40.8052,-74.0457
+San Joaquin (Freshwater Marsh Tower 1),US-SJ1,33.6623,-117.8514
+San Joaquin (Freshwater Marsh Tower 2),US-SJ2,33.6596,-117.855
+Shark River Slough (Tower SRS-6) Everglades,US-Skr,25.3629,-81.0776
+Silas Little- New Jersey,US-Slt,39.9138,-74.596
+Sherman Island,US-Snd,38.0373,-121.7537
+Sherman Island Restored Wetland,US-Sne,38.0369,-121.7547
+Sherman Barn,US-Snf,38.04,-121.7272
+Sky Oaks- Old Stand,US-SO2,33.3738,-116.6228
+Sky Oaks- Young Stand,US-SO3,33.3771,-116.6226
+Sky Oaks- New Stand,US-SO4,33.3845,-116.6406
+Slashpine-Austin Cary- 65yrs nat regen,US-SP1,29.7381,-82.2188
+"Slashpine-Mize-clearcut-3yr,regen",US-SP2,29.7648,-82.2448
+Slashpine-Donaldson-mid-rot- 12yrs,US-SP3,29.7548,-82.1633
+Slashpine-Rayonier-mid-rot- 12yrs,US-SP4,29.8028,-82.2032
+Santa Rita Creosote,US-SRC,31.9083,-110.8395
+NEON Santa Rita Experimental Range (SRER),US-SRE,31.9107,-110.8355
+Santa Rita Grassland,US-SRG,31.7894,-110.8277
+Santa Rita Mesquite,US-SRM,31.8214,-110.8661
+Suisun marsh - Rush Ranch,US-Srr,38.2006,-122.0264
+Susquehanna Shale Hills Critical Zone Observatory,US-SSH,40.6658,-77.9041
+Saratoga,US-Sta,41.3966,-106.8024
+St Jones Reserve,US-StJ,39.0882,-75.4372
+Strawberry Swamp,US-StS,33.3302,-79.2492
+Maui Sugarcane Middle,US-SuM,20.7981,-156.454
+Maui Sugarcane Lee/Sheltered,US-SuS,20.7847,-156.4039
+Maui Sugarcane Windy,US-SuW,20.8246,-156.4913
+Sylvania Wilderness Area,US-Syv,46.242,-89.3477
+Tonzi Ranch,US-Ton,38.4316,-120.966
+Twitchell Wetland West Pond,US-Tw1,38.1074,-121.6469
+Twitchell Corn,US-Tw2,38.1047,-121.6433
+Twitchell Alfalfa,US-Tw3,38.1159,-121.6467
+Twitchell East End Wetland,US-Tw4,38.103,-121.6414
+East Pond Wetland,US-Tw5,38.1072,-121.6426
+Twitchell Island,US-Twt,38.1087,-121.653
+Riesel Farm Native Prairie,US-Tx2,31.4802,-96.8827
+Riesel Farm Aspirational Agriculture,US-Tx3,31.4777,-96.8883
+Riesel Farm Traditional Agriculture,US-Tx4,31.4693,-96.8865
+Texas A&M University Farm,US-Tx5,30.5328,-96.4252
+La Copita Grassland - Savanna,US-Tx6,27.6666,-98.2089
+La Copita Shrubland - Savanna,US-Tx7,27.665,-98.2007
+Sargent Unit Salt Marsh,US-Tx9,28.7805,-95.6144
+"University of Alaska, Fairbanks",US-Uaf,64.8663,-147.8555
+ULM Flux Tower,US-ULM,32.457,-91.9743
+Douglas Lake,US-UM3,45.5686,-84.6707
+Univ. of Mich. Biological Station,US-UMB,45.5598,-84.7138
+UMBS Disturbance,US-UMd,45.5625,-84.6975
+NEON University of Notre Dame Environmental Research Center (UNDE),US-UND,46.2339,-89.5373
+Upad,US-Upa,70.2815,-148.8848
+Vaira Ranch- Ione,US-Var,38.4133,-120.9507
+Valles Caldera Mixed Conifer,US-Vcm,35.8884,-106.5321
+Valles Caldera Ponderosa Pine,US-Vcp,35.8642,-106.5967
+Valles Caldera Sulphur Springs Mixed Conifer,US-Vcs,35.9193,-106.6142
+Virginia Coast Reserve Fowling Point,US-VFP,37.4111,-75.8333
+Walker Branch Watershed,US-WBW,35.9588,-84.2874
+Willow Creek,US-WCr,45.8059,-90.0799
+Walden,US-Wdn,40.7838,-106.2618
+Willamette Grass,US-Wgr,45.1129,-122.656
+Walnut Gulch Lucky Hills Shrub,US-Whs,31.7438,-110.0522
+Young red pine (YRP),US-Wi0,46.6188,-91.0814
+Intermediate hardwood (IHW),US-Wi1,46.7305,-91.2329
+Intermediate red pine (IRP),US-Wi2,46.6869,-91.1528
+Mature hardwood (MHW),US-Wi3,46.6347,-91.0987
+Mature red pine (MRP),US-Wi4,46.7393,-91.1663
+Mixed young jack pine (MYJP),US-Wi5,46.6531,-91.0858
+Pine barrens #1 (PB1),US-Wi6,46.6249,-91.2982
+Red pine clearcut (RPCC),US-Wi7,46.6491,-91.0693
+Young hardwood clearcut (YHW),US-Wi8,46.7223,-91.2524
+Young Jack pine (YJP),US-Wi9,46.6188,-91.0814
+Willard Juniper Savannah,US-Wjs,34.4255,-105.8615
+Walnut Gulch Kendall Grasslands,US-Wkg,31.7365,-109.9419
+Walnut River Watershed (Smileyburg),US-Wlr,37.5208,-96.855
+NEON Woodworth (WOOD),US-WOD,47.1282,-99.2414
+Willamette Poplar,US-Wpp,44.1369,-123.1824
+Winous Point North Marsh,US-WPT,41.4646,-82.9962
+Wind River Crane Site,US-Wrc,45.8205,-121.9519
+Willamette Wheat,US-Wwt,45.1089,-122.6664
+Yellow Cab urban,US-Ylw,29.7894,-95.3536
