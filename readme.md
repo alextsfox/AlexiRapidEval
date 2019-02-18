@@ -3,7 +3,8 @@
 This is a draft package of the alexi rapid eval tool. To use the tool, run the bash script RunRapidEval.sh 
 
 The tool is written in python 3.6.6, and has the following dependencies:
-        gdal
+
+      gdal
 	pandas
 	numpy
 	matplotlib
@@ -26,8 +27,8 @@ The tool is written in python 3.6.6, and has the following dependencies:
 The python file AverageET can take a number of input options. Append them to the final line of the bash file to use them View them with:
         python3 AverageET.py -h
         
-        Recommended options:
-        -g to generate quick-look graphs of your output data
+Recommended options:
+        -g to generate quick-look graphs of your output data:
         -v for more detailed command line output and error messages
         
          
