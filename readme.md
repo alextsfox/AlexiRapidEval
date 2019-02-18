@@ -8,7 +8,7 @@ The tool is written in python 3.6.6, and has the following dependencies:
 	numpy
 	matplotlib
 
-*In order to run, the tool needs to know where the daily ALEXI data files are. Open the RunRapidEval.sh bash file and input the filepath to the data files where the variable "etdir" is declared.
+* In order to run, the tool needs to know where the daily ALEXI data files are. Open the RunRapidEval.sh bash file and input the filepath to the data files where the variable "etdir" is declared.
 
 * Extracts daily timeseries of modeled and observed daily ET at user-selected set of flux sites. Assumes that flux and ET data is stored locally.
 
