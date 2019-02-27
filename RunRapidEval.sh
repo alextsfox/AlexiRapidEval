@@ -22,8 +22,20 @@ boxX=3
 # Year to compare
 year=2014
 
+# Variables to pull from flux data file. 
+# Usage: (<var1> <var2> <var3>...)
+vars=(TA_F RECO_NT_VUT_25)
+
 # Fluxnet site ID to compare
 site1=US-UMd
 
-python3 AverageET.py $et_dir/$et_prefix $flux_file $out_dir -y $year -by $boxY -bx $boxX -s $site1 -f -g --verbose
+python3 AverageET.py \
+$et_dir/$et_prefix \
+$flux_file $out_dir \
+-y $year \
+-by $boxY \
+-bx $boxX \
+-s $site1 \
+-vars ${vars[*]} \
+-f -g --verbose
 

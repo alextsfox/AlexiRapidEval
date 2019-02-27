@@ -227,6 +227,8 @@ def main():
 				vals.append(np.nan)
 				if args.verbose:
 					print("I couldn't find file {}".format(filename))
+		
+		# warns user about missing .hdr files
 		for fn in missingHDRLst:
 			print('\n !!! WARNING: Missing .hdr file for {}. Could not load image !!!\n'.format(fn))
 
@@ -256,7 +258,7 @@ def main():
 
 			plt.plot(ETData.index ,ETData['ET'], linewidth=2, c=(1,0,0))
 			for var in fluxVars:
-				plt.scatter(fluxData.index, fluxData[var], s=2, c=(0,0,1))
+				plt.scatter(fluxData.index, fluxData[var], s=2)
 
 			plt.xlim(0,366)
 			plt.legend()
@@ -282,6 +284,9 @@ if __name__ == '__main__':
 	parser.add_argument("-f", "--flip", action="store_true", help="If the image data is upside down, this option flips the image when performing computations.\n ")
 	parser.add_argument("-g", "--genfigs", action="store_true", help="Program will save figures to output directory\n ")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+	
+	parser.add_argument_group('Named required arguments')
+	parser.add_argument("-vars", "--variables", required=True, nargs='+', help='Variable names to load from flux data files. Input as <var1> <var2> ...')
 	args = parser.parse_args()
 
 	#assigning variables
@@ -314,7 +319,7 @@ if __name__ == '__main__':
 		else:
 			print("Will not be flipping images...")
 
-	fluxVars = ('TA_F',)
+	fluxVars = args.variables
 
 	# retrieve list of fluxnet sites, reindex by site id
 	SITELIST_FILENAME = 'Fluxnet_site_list.csv'
