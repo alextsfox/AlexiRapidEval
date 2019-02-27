@@ -129,7 +129,11 @@ def getFluxData(site_ID, year, *fluxVars):
 				  .loc[:,['TIMESTAMP',*fluxVars]]
 				  .set_index('TIMESTAMP')
 				  .loc[startDate:endDate])
-	FluxData['DOY'] = range(1,366)
+
+	
+
+	# account for leap year, don't set to 365 days, just the length of that year.
+	FluxData['DOY'] = range(len(FluxData.index))
 	FluxData = FluxData.set_index('DOY')
 
 	FluxData[FluxData == -9999] = np.nan
@@ -177,7 +181,7 @@ def main():
 
 			# retrieve the ET filepath. Each .dat file has an associated header file.
 			date = "%d%03d" % (year, doy)
-			et_path = os.path.join(args.ET_Path)#'ALEXI_DATA')#/Users/waldinian/Documents/Data/4rodnei/DAILY_EDAY_TERRA') 
+			et_path = os.path.join(args.ET_Path)#'ALEXI_DATA')#/Users/waldinian/Documents/Data/4rodnei/DAILY_EDAY_TERRA') ((
 			filename = os.path.join(et_path, 'EDAY_CERES_%d%03d.dat' % (year,doy))
 
 			# average ET values within a box
@@ -320,7 +324,11 @@ if __name__ == '__main__':
 		print('Using variables {}...'.format(fluxVars))
 		print('\n',sitesDF,'\n')
 
-	sitesDF = sitesDF.to_numpy()
+	try:
+		sitesDF = sitesDF.to_numpy()
+	except AttributeError as err:
+		sitesDF = sitesDF.values
+
 	SITE_IDS = sitesDF[:,0]
 	LOCS = sitesDF[:,2:4]
 	SITE_NAMES = sitesDF[:,1]
