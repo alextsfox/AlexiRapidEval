@@ -12,15 +12,16 @@ et_prefix=EDAY_CERES
 
 # Directory you would like the results output to
 out_dir=results
-mkdir -p $out_dir/fig
 
+mkdir -p $out_dir/fig
 
 # ET box size, in pixels
 boxY=3
 boxX=3
 
-# Year to compare
-year=2014
+# Year range to compare (inclusive)
+start_year=2013
+end_year=2015
 
 # Variables to pull from flux data file. 
 # Usage: (<var1> <var2> <var3>...)
@@ -32,7 +33,7 @@ site1=US-UMd
 python3 AverageET.py \
 $et_dir/$et_prefix \
 $flux_file $out_dir \
--y $year \
+-y $start_year $end_year \
 -by $boxY \
 -bx $boxX \
 -s $site1 \

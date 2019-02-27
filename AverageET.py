@@ -98,7 +98,7 @@ def restrictToBox(raster, siteY, siteX, boxY, boxX, flip, counter):
 	return rasterArray
 
 # given a site_ID and year, returns a daily list of variable values to plot
-def getFluxData(site_ID, year, *fluxVars):
+def getFluxData(site_ID, years, *fluxVars):
 	# site_ID = string
 	# year = int
 	# fluxVars = strings representing variable names
@@ -117,8 +117,8 @@ def getFluxData(site_ID, year, *fluxVars):
 		print("~~~~~~~~~~~~~~~")
 		print('Found Flux data file: ', fileName.split('/')[-1])
 
-	startDate = int('{:04d}{:04d}'.format(year,101))
-	endDate   = int('{:04d}{:04d}'.format(year,1231))
+	startDate = int('{:04d}{:04d}'.format(years[0],101))
+	endDate   = int('{:04d}{:04d}'.format(years[-1],1231))
 	
 	# read a csv file with flux data
 	# access the timestamp column and the needed variables columns
@@ -130,13 +130,12 @@ def getFluxData(site_ID, year, *fluxVars):
 				  .set_index('TIMESTAMP')
 				  .loc[startDate:endDate])
 
-	
-
 	# account for leap year, don't set to 365 days, just the length of that year.
-	FluxData['DOY'] = range(len(FluxData.index))
+	FluxData['DOY'] = range(1,len(FluxData.index)+1)
 	FluxData = FluxData.set_index('DOY')
+	print(FluxData)
 
-	FluxData[FluxData == -9999] = np.nan
+	#FluxData[FluxData == -9999] = np.nan
 
 	if args.verbose:
 		print("~~~~~~~~~~~~~~~")
@@ -176,69 +175,69 @@ def main():
 		counter = 0
 
 		vals = []
+		errorMessages=[]
+		for year in years:
+			for doy in range(1,366):
 
-		missingHDRLst=[]
-		for doy in range(1,366):
+				# retrieve the ET filepath. Each .dat file has an associated header file.
+				date = "%d%03d" % (year, doy)
+				filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)
 
-			# retrieve the ET filepath. Each .dat file has an associated header file.
-			date = "%d%03d" % (year, doy)
-			filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)
+				# average ET values within a box
+				if os.path.exists(filename):
 
-			# average ET values within a box
-			if os.path.exists(filename):
+					# get geotransform from the raster file and find the YX of the site given lat/lon
+					
+					# catch missing .hdr files
+					gdal.UseExceptions()
+					try:
+						raster = gdal.Open(filename)
+					except RuntimeError as err:
+						errorMessages.append('\n !!! WARNING: Missing .hdr file for {}. Could not load image !!!\n'.format(fn))
 
-				# get geotransform from the raster file and find the YX of the site given lat/lon
-				
-				# catch missing .hdr files
-				gdal.UseExceptions()
-				try:
-					raster = gdal.Open(filename)
-				except RuntimeError as err:
-					missingHDRLst.append(filename)	
+					gt = raster.GetGeoTransform()
 
-				gt = raster.GetGeoTransform()
+					# check to see if the location is in the bounds of the raster, then average ET values inside the box
+					if inRaster(raster, gt, LOCS[i]):
 
-				# check to see if the location is in the bounds of the raster, then average ET values inside the box
-				if inRaster(raster, gt, LOCS[i]):
+						siteYX = getYXValsFromLatLon(gt, *LOCS[i], counter)
 
-					siteYX = getYXValsFromLatLon(gt, *LOCS[i], counter)
+						rasterArray = restrictToBox(raster, *siteYX, *boxYX, FLIP, counter)
+						counter += 1
 
-					rasterArray = restrictToBox(raster, *siteYX, *boxYX, FLIP, counter)
-					counter += 1
+						meanET = np.nanmean(rasterArray)
 
-					meanET = np.nanmean(rasterArray)
+						vals.append(meanET)
 
-					vals.append(meanET)
+					# if not in raster, set ET val to np.nan, print a warning
+					else:
 
-				# if not in raster, set ET val to np.nan, print a warning
+						vals.append(np.nan)
+						if counter == 1:
+
+							errorMessages.append('Error: Site_ID %s at %s is not within the bounds of the raster file.' % (SITE_IDS[i], LOCS[i]))
+							counter += 1
+
+					# a nice looking progress bar.	
+					update_progress(doy/(366*len(years)))
+					 
 				else:
 
 					vals.append(np.nan)
-					if counter == 1:
-
-						print('Site_ID %s at %s is not within the bounds of the raster file.' % (SITE_IDS[i], LOCS[i]))
-						counter += 1
-
-				# a nice looking progress bar.	
-				update_progress(doy/365)
-				 
-			else:
-
-				vals.append(np.nan)
-				if args.verbose:
-					print("I couldn't find file {}".format(filename))
+					if args.verbose:
+						errorMessages.append("Error: I couldn't find file {}".format(filename))
 		
 		# warns user about missing .hdr files
-		for fn in missingHDRLst:
-			print('\n !!! WARNING: Missing .hdr file for {}. Could not load image !!!\n'.format(fn))
+		for message in errorMessages:
+			print(message)
 
 		# create a pandas dataframe of the averaged ET values over time, print to CSV
-		ETdct = {'DOY': range(1,366), 'ET': vals}
+		ETdct = {'DOY': range(1,len(vals)+1), 'ET': vals}
 		ETData = pd.DataFrame.from_dict(ETdct)
 		ETData = ETData.set_index('DOY')
 		
 		# get a pandas dataframe of the needed fluxtower variable data
-		fluxData = getFluxData(SITE_IDS[i], year, *fluxVars)
+		fluxData = getFluxData(SITE_IDS[i], years, *fluxVars)
 
 		# dataframe comparing ALEXI and Fluxtower data
 		ET_and_Flux_Compared = pd.DataFrame()
@@ -247,6 +246,7 @@ def main():
 			ET_and_Flux_Compared[var] = fluxData[var]
 
 		# save to csv
+		ET_and_Flux_Compared = ET_and_Flux_Compared.fillna(-9999).astype(int)
 		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX)))
 		if args.verbose:
 			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX))))
@@ -260,14 +260,18 @@ def main():
 			for var in fluxVars:
 				plt.scatter(fluxData.index, fluxData[var], s=2)
 
-			plt.xlim(0,366)
+			plt.xlim(0,len(ETData.index))
 			plt.legend()
+			plt.xlabel('DOY')
+			plt.ylabel('Value')
 			plt.title(['{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)])
 			plt.savefig(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)))
 			plt.clf()
 
 			if args.verbose:
 				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX))))
+		if len(errorMessages) > 0:
+			print('\n Scroll up to view error messages (there may be multiple different ones) \n')
 
 if __name__ == '__main__':
 
@@ -277,28 +281,24 @@ if __name__ == '__main__':
 	parser.add_argument("Flux_File", help="File containing daily flux tower CSV data")
 	parser.add_argument("Out_Path", help="Directory to output files to. By default creates a subdirectory in the working directory.")
 
-	parser.add_argument("-s", "--sites", nargs='*', help="Fluxnet Site IDs to evaluate, separated by spaces. By default evaluates at all site locations on file.")
-	parser.add_argument("-y", "--year", type=int, help="Year, default 2015.")
 	parser.add_argument("-by", "--ysize", type=int, help="Y dimension of box in pixels, default 1.\n ")
 	parser.add_argument("-bx", "--xsize", type=int, help="Y dimension of box in pixels, default 1.\n ")
 	parser.add_argument("-f", "--flip", action="store_true", help="If the image data is upside down, this option flips the image when performing computations.\n ")
 	parser.add_argument("-g", "--genfigs", action="store_true", help="Program will save figures to output directory\n ")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
 	
-	parser.add_argument_group('Named required arguments')
-	parser.add_argument("-vars", "--variables", required=True, nargs='+', help='Variable names to load from flux data files. Input as <var1> <var2> ...')
+	req = parser.add_argument_group('Named required arguments')
+	req.add_argument("-y", "--years", required=True, nargs='+', type=int, help="Year range (inclusive). Usage: <start_year> <end_year>")
+	req.add_argument("-vars", "--variables", required=True, nargs='+', help='Variable names to load from flux data files. Usage: <var1> <var2>...')
+	req.add_argument("-s", "--sites", required=True, nargs='*', help="Fluxnet Site IDs to evaluate, separated by spaces. Usage: <site1> <site2>... OR <site_list.txt>")
+	
 	args = parser.parse_args()
 
 	#assigning variables
 	if not os.path.exists(args.Out_Path):
 		os.makedirs(args.Out_Path)
 		print(args.Out_Path)
-	
-	year = 2015
-	if args.year is not None:
-		year = args.year
-	elif args.verbose:
-		print("Setting year to default...")
+
 	boxYX = [1,1]
 	if args.ysize is not None:
 		boxYX[0] = args.ysize
@@ -320,6 +320,9 @@ if __name__ == '__main__':
 			print("Will not be flipping images...")
 
 	fluxVars = args.variables
+
+	# list of years
+	years = [i for i in range(args.years[0], args.years[1]+1)]
 
 	# retrieve list of fluxnet sites, reindex by site id
 	SITELIST_FILENAME = 'Fluxnet_site_list.csv'
