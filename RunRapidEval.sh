@@ -14,29 +14,29 @@ et_prefix=EDAY_CERES
 out_dir=results
 
 mkdir -p $out_dir/fig
+mkdir -p errors
 
-# ET box size, in pixels
-boxY=3
-boxX=3
+# Raster buffer size in pixels
+b=1
 
 # Year range to compare (inclusive)
-start_year=2013
-end_year=2015
+start_year=2012
+end_year=2016
 
 # Variables to pull from flux data file. 
 # Usage: (<var1> <var2> <var3>...)
 vars=(TA_F RECO_NT_VUT_25)
 
 # Fluxnet site ID to compare
-site1=US-UMd
+# Usage: (<siteID_1> <siteID_2>...)
+sites=(US-UMd)
 
 python3 AverageET.py \
 $et_dir/$et_prefix \
 $flux_file $out_dir \
 -y $start_year $end_year \
--by $boxY \
--bx $boxX \
--s $site1 \
+-b $b \
+-s ${sites[*]} \
 -vars ${vars[*]} \
 -f -g --verbose
 

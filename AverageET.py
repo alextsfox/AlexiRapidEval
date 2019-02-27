@@ -15,6 +15,8 @@ import gdal
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from calendar import isleap
+from time import time
 import sys
 
 # import matplotlib.animation as anim
@@ -68,7 +70,7 @@ def inRaster(raster, gt, coords):
 
 # given a raster, restricts it to a box centered around a certain pixel.
 # for even sized boxes, snaps to the left.
-def restrictToBox(raster, siteY, siteX, boxY, boxX, flip, counter):
+def restrictToBox(raster, siteY, siteX, buff, flip, counter):
 	# raster = raster data
 	# siteY, siteX, boxY, boxX = ints
 	# flip = bool
@@ -78,21 +80,19 @@ def restrictToBox(raster, siteY, siteX, boxY, boxX, flip, counter):
 	if flip:
 		rasterArray = np.flip(raster.ReadAsArray(),axis=0)
 
+	rasterArray = rasterArray[siteY - buff : siteY + buff + 1,
+							  siteX - buff : siteX + buff + 1]
 
-
-	rasterArray = rasterArray[siteY - boxY//2 : siteY + boxY - boxY//2,
-				    		  siteX - boxX//2 : siteX + boxX - boxX//2]
+	U =  siteY + buff + 1
+	Le = siteX - buff
+	Lo = siteY - buff
+	R = siteX + buff + 1		    		  
 
 	rasterArray[rasterArray == -9999] = np.nan
 
 	if args.verbose and counter == 0:
 		print("~~~~~~~~~~~~~~~")
-		print('Restricted to box with corners (formatted as (x,y)) at: \n UL = {}, UR = {} \n LL = {}, LR = {}'.format((siteY + boxY - boxY//2 - 1, siteX - boxX//2),
-																								 (siteY + boxY - boxY//2 - 1, siteX + boxX - boxX//2 - 1),
-																								 (siteY - boxY//2, siteX - boxX//2),
-																								 (siteY - boxY//2, siteX + boxX - boxX//2 - 1)
-																								 )
-			 )
+		print('Restricted to box with corners (formatted as (x,y)) at: \n UL = ({Le},{U}), UR = ({R},{U}) \n LL = ({Le},{Lo}), LR = ({R},{Lo})'.format(U=U,Le=Le,Lo=Lo,R=R))
 		print()
 
 	return rasterArray
@@ -111,7 +111,6 @@ def getFluxData(site_ID, years, *fluxVars):
 	path = args.Flux_File
 	fileName = glob.glob(args.Flux_File)
 
-	print(fileName)
 	fileName = fileName[0]
 	if args.verbose:
 		print("~~~~~~~~~~~~~~~")
@@ -133,14 +132,8 @@ def getFluxData(site_ID, years, *fluxVars):
 	# account for leap year, don't set to 365 days, just the length of that year.
 	FluxData['DOY'] = range(1,len(FluxData.index)+1)
 	FluxData = FluxData.set_index('DOY')
-	print(FluxData)
 
-	#FluxData[FluxData == -9999] = np.nan
-
-	if args.verbose:
-		print("~~~~~~~~~~~~~~~")
-		print('Flux Data (first 15 entries)')
-		print(FluxData[:15])
+	FluxData[FluxData == -9999] = np.nan
 	
 	return FluxData
 	
@@ -176,8 +169,14 @@ def main():
 
 		vals = []
 		errorMessages=[]
+		hdrWarn = 0
+		notFound = 0
+		outOfRaster = 0
+		yearCol=[]
+		doyCol=[]
 		for year in years:
-			for doy in range(1,366):
+			# in case of leap years
+			for doy in range(1,367):
 
 				# retrieve the ET filepath. Each .dat file has an associated header file.
 				date = "%d%03d" % (year, doy)
@@ -194,6 +193,7 @@ def main():
 						raster = gdal.Open(filename)
 					except RuntimeError as err:
 						errorMessages.append('\n !!! WARNING: Missing .hdr file for {}. Could not load image !!!\n'.format(fn))
+						hdrWarn += 1
 
 					gt = raster.GetGeoTransform()
 
@@ -202,7 +202,7 @@ def main():
 
 						siteYX = getYXValsFromLatLon(gt, *LOCS[i], counter)
 
-						rasterArray = restrictToBox(raster, *siteYX, *boxYX, FLIP, counter)
+						rasterArray = restrictToBox(raster, *siteYX, args.buff, FLIP, counter)
 						counter += 1
 
 						meanET = np.nanmean(rasterArray)
@@ -214,42 +214,68 @@ def main():
 
 						vals.append(np.nan)
 						if counter == 1:
-
 							errorMessages.append('Error: Site_ID %s at %s is not within the bounds of the raster file.' % (SITE_IDS[i], LOCS[i]))
 							counter += 1
+							outOfRaster += 1
 
 					# a nice looking progress bar.	
 					update_progress(doy/(366*len(years)))
+
+					# will be added to the .csv file
+					
 					 
 				else:
-
 					vals.append(np.nan)
 					if args.verbose:
-						errorMessages.append("Error: I couldn't find file {}".format(filename))
-		
-		# warns user about missing .hdr files
-		for message in errorMessages:
-			print(message)
+						if doy == 366:
+							errorMessages.append("Error: I couldn't find file {} (this may be because {} is not a leap year)".format(filename, year))
+						else:
+							errorMessages.append("Error: I couldn't find file {}".format(filename))
+						notFound += 1
+				
+				if doy != 366:
+					yearCol.append(year)
+					doyCol.append(doy)
+				if doy == 366 and isleap(year):
+					yearCol.append(year)
+					doyCol.append(doy)
+
+		# generates an error log
+		errorFile = open('errors/{}_{}_Errors.txt'.format(time(),SITE_IDS[i]), 'w')
+		for error in errorMessages:
+			errorFile.write(error)
+
+		print()
+		print()
+		print('~~~~~~~~~~~~~~~')
+		print('Saved errors/{}_{}_Errors.txt'.format(time(),SITE_IDS[i]))
+		print('{} errors were encountered when processing raster data:'.format(len(errorMessages)))
+		print('    {} missing .hdr files'.format(hdrWarn))
+		print('    {} raster files could not be found'.format(notFound))
+		print('    {} locations were not within the bounds of the raster files'.format(outOfRaster))
+		print()
 
 		# create a pandas dataframe of the averaged ET values over time, print to CSV
 		ETdct = {'DOY': range(1,len(vals)+1), 'ET': vals}
 		ETData = pd.DataFrame.from_dict(ETdct)
-		ETData = ETData.set_index('DOY')
+		#ETData = ETData.set_index('DOY')
 		
 		# get a pandas dataframe of the needed fluxtower variable data
 		fluxData = getFluxData(SITE_IDS[i], years, *fluxVars)
 
 		# dataframe comparing ALEXI and Fluxtower data
 		ET_and_Flux_Compared = pd.DataFrame()
+		ET_and_Flux_Compared['Year'] = yearCol
+		ET_and_Flux_Compared['DOY'] = doyCol
 		ET_and_Flux_Compared['ET'] = ETData['ET']
 		for var in fluxVars:
 			ET_and_Flux_Compared[var] = fluxData[var]
 
 		# save to csv
 		ET_and_Flux_Compared = ET_and_Flux_Compared.fillna(-9999).astype(int)
-		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX)))
+		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}_{1}px.csv'.format(SITE_IDS[i], args.buff)), index=False)
 		if args.verbose:
-			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX))))
+			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}_{1}px.csv'.format(SITE_IDS[i],args.buff))))
 
 		# generage figures
 		if args.genfigs:
@@ -264,14 +290,12 @@ def main():
 			plt.legend()
 			plt.xlabel('DOY')
 			plt.ylabel('Value')
-			plt.title(['{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)])
-			plt.savefig(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)))
+			plt.title(['{0}_{1}px.png'.format(SITE_IDS[i], args.buff)])
+			plt.savefig(os.path.join(figPath,'{0}_{1}px.png'.format(SITE_IDS[i],args.buff)))
 			plt.clf()
 
 			if args.verbose:
-				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX))))
-		if len(errorMessages) > 0:
-			print('\n Scroll up to view error messages (there may be multiple different ones) \n')
+				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}px.png'.format(SITE_IDS[i], args.buff))))
 
 if __name__ == '__main__':
 
@@ -281,8 +305,7 @@ if __name__ == '__main__':
 	parser.add_argument("Flux_File", help="File containing daily flux tower CSV data")
 	parser.add_argument("Out_Path", help="Directory to output files to. By default creates a subdirectory in the working directory.")
 
-	parser.add_argument("-by", "--ysize", type=int, help="Y dimension of box in pixels, default 1.\n ")
-	parser.add_argument("-bx", "--xsize", type=int, help="Y dimension of box in pixels, default 1.\n ")
+	parser.add_argument("-b", "--buff", type=int, help="Buffer, in number of pixels. Default 0.")
 	parser.add_argument("-f", "--flip", action="store_true", help="If the image data is upside down, this option flips the image when performing computations.\n ")
 	parser.add_argument("-g", "--genfigs", action="store_true", help="Program will save figures to output directory\n ")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
@@ -290,7 +313,7 @@ if __name__ == '__main__':
 	req = parser.add_argument_group('Named required arguments')
 	req.add_argument("-y", "--years", required=True, nargs='+', type=int, help="Year range (inclusive). Usage: <start_year> <end_year>")
 	req.add_argument("-vars", "--variables", required=True, nargs='+', help='Variable names to load from flux data files. Usage: <var1> <var2>...')
-	req.add_argument("-s", "--sites", required=True, nargs='*', help="Fluxnet Site IDs to evaluate, separated by spaces. Usage: <site1> <site2>... OR <site_list.txt>")
+	req.add_argument("-s", "--sites", required=True, nargs='+', help="Fluxnet Site IDs to evaluate, separated by spaces. Usage: list of sites <site1> <site2>... OR a sigle text file containing site IDs <site_list.txt>")
 	
 	args = parser.parse_args()
 
@@ -299,16 +322,8 @@ if __name__ == '__main__':
 		os.makedirs(args.Out_Path)
 		print(args.Out_Path)
 
-	boxYX = [1,1]
-	if args.ysize is not None:
-		boxYX[0] = args.ysize
-	elif args.verbose:
-		print("Setting box y size to default...")
-	if args.xsize is not None:
-		boxYX[1] = args.xsize
-	elif args.verbose:
-		print("Setting box x size to default...")
-	boxYX = (boxYX[0],boxYX[1])
+	if args.buff is None:
+		args.buff = 0
 
 	FLIP = False
 	if args.flip:
@@ -318,6 +333,22 @@ if __name__ == '__main__':
 			print('\nFlipping images...')
 		else:
 			print("Will not be flipping images...")
+
+	try:
+		sitesToUse = open(args.sites, 'r')
+		sitesToUse = sitesToUse.readlines()
+
+		# removing \n character
+		for i in range(len(sitesToUse)):
+			if sitesToUse[-1] == '\n':
+				sitesToUse[i] = sitesToUse[:-1]
+
+		print('Opening file {}'.format(args.sites))
+
+	except TypeError as err:
+		sitesToUse = [site for site in args.sites]
+
+	print('Looking at sites {}'.format(sitesToUse))
 
 	fluxVars = args.variables
 
@@ -338,6 +369,7 @@ if __name__ == '__main__':
 		print('Using variables {}...'.format(fluxVars))
 		print('\n',sitesDF,'\n')
 
+	# works with either version of pandas, using either depricated .values or the newer .to_numpy()
 	try:
 		sitesDF = sitesDF.to_numpy()
 	except AttributeError as err:
