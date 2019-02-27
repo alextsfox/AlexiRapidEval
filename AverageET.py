@@ -181,8 +181,8 @@ def main():
 
 			# retrieve the ET filepath. Each .dat file has an associated header file.
 			date = "%d%03d" % (year, doy)
-			et_path = os.path.join(args.ET_Path)#'ALEXI_DATA')#/Users/waldinian/Documents/Data/4rodnei/DAILY_EDAY_TERRA') ((
-			filename = os.path.join(et_path, 'EDAY_CERES_%d%03d.dat' % (year,doy))
+			#et_path = os.path.join(args.ET_Path)#'ALEXI_DATA')#/Users/waldinian/Documents/Data/4rodnei/DAILY_EDAY_TERRA') ((
+			filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)#os.path.join(et_path, '_%d%03d.dat' % (year,doy))
 
 			# average ET values within a box
 			if os.path.exists(filename):
