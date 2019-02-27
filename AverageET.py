@@ -177,6 +177,7 @@ def main():
 
 		vals = []
 
+		missingHDRLst=[]
 		for doy in range(1,366):
 
 			# retrieve the ET filepath. Each .dat file has an associated header file.
@@ -187,7 +188,14 @@ def main():
 			if os.path.exists(filename):
 
 				# get geotransform from the raster file and find the YX of the site given lat/lon
-				raster = gdal.Open(filename)
+				
+				# catch missing .hdr files
+				gdal.UseExceptions()
+				try:
+					raster = gdal.Open(filename)
+				except RuntimeError as err:
+					missingHDRLst.append(filename)	
+
 				gt = raster.GetGeoTransform()
 
 				# check to see if the location is in the bounds of the raster, then average ET values inside the box
@@ -218,7 +226,9 @@ def main():
 
 				vals.append(np.nan)
 				if args.verbose:
-					print("I couldn't find file {}".format(filename))	
+					print("I couldn't find file {}".format(filename))
+		for fn in missingHDRLst:
+			print('\n !!! WARNING: Missing .hdr file for {}. Could not load image !!!\n'.format(fn))
 
 		# create a pandas dataframe of the averaged ET values over time, print to CSV
 		ETdct = {'DOY': range(1,366), 'ET': vals}
@@ -244,9 +254,9 @@ def main():
 
 			figPath = os.path.join(args.Out_Path, 'fig')
 
-			plt.scatter(ETData.index ,ETData['ET'],s=2)
+			plt.plot(ETData.index ,ETData['ET'], linewidth=2, c=(1,0,0))
 			for var in fluxVars:
-				plt.scatter(fluxData.index, fluxData[var], s=2)
+				plt.scatter(fluxData.index, fluxData[var], s=2, c=(0,0,1))
 
 			plt.xlim(0,366)
 			plt.legend()
