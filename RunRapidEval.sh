@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # Path to the data file downloaded from fluxnet
-flux_file=FLX_US-UMd_FLUXNET2015_SUBSET_DD_2007-2014_1-3.csv
+flux_file=US-UMd.csv
 
 # Directory containing ALEXI/ET data files
 et_dir=ALEXI_DATA
@@ -11,7 +11,9 @@ et_dir=ALEXI_DATA
 et_prefix=EDAY_CERES
 
 # Directory you would like the results output to
-out_dir=Results
+out_dir=results
+mkdir -p $out_dir/fig
+
 
 # ET box size, in pixels
 boxY=3

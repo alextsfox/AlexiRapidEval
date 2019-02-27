@@ -181,8 +181,7 @@ def main():
 
 			# retrieve the ET filepath. Each .dat file has an associated header file.
 			date = "%d%03d" % (year, doy)
-			#et_path = os.path.join(args.ET_Path)#'ALEXI_DATA')#/Users/waldinian/Documents/Data/4rodnei/DAILY_EDAY_TERRA') ((
-			filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)#os.path.join(et_path, '_%d%03d.dat' % (year,doy))
+			filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)
 
 			# average ET values within a box
 			if os.path.exists(filename):
@@ -236,16 +235,13 @@ def main():
 			ET_and_Flux_Compared[var] = fluxData[var]
 
 		# save to csv
-		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}{1}_{2}x{3}.csv'.format(SITE_IDS[i], year, *boxYX)))
+		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX)))
 		if args.verbose:
-			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}{1}_{2}x{3}.csv'.format(SITE_IDS[i], year, *boxYX))))
+			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}_{1}x{2}.csv'.format(SITE_IDS[i], *boxYX))))
 
 		# generage figures
 		if args.genfigs:
 
-			if not os.path.exists(os.path.join(args.Out_Path, 'fig')):
-				figPath = os.path.join(args.Out_Path, 'fig')
-				os.makedirs(figPath)
 			figPath = os.path.join(args.Out_Path, 'fig')
 
 			plt.scatter(ETData.index ,ETData['ET'],s=2)
@@ -254,12 +250,12 @@ def main():
 
 			plt.xlim(0,366)
 			plt.legend()
-			plt.title(['{0}_{1}_{2}x{3}.png'.format(SITE_NAMES[i], year, *boxYX)])
-			plt.savefig(os.path.join(figPath,'{0}_{1}_{2}x{3}.png'.format(SITE_IDS[i], year, *boxYX)))
+			plt.title(['{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)])
+			plt.savefig(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX)))
 			plt.clf()
 
 			if args.verbose:
-				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}_{2}x{3}.png'.format(SITE_IDS[i], year, *boxYX))))
+				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}x{2}.png'.format(SITE_IDS[i], *boxYX))))
 
 if __name__ == '__main__':
 
