@@ -25,6 +25,7 @@ The tool is written in python 3.6.6, and has the following python dependencies:
 The python file AverageET can take a number of input options. Append them to the final line of the bash file to use them. 
 
 For a full list of different input arguments, run the following command:
+
         python3 AverageET.py -h
         
 Recommended options:
@@ -33,6 +34,7 @@ Recommended options:
     -v for more detailed command line output and error messages
     
 *Further Questions?*
+
 Check out the wiki: https://github.com/alextsfox/AlexiRapidEval/wiki
         
          
