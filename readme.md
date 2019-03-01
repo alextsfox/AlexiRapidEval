@@ -28,7 +28,7 @@ For a full list of different input arguments, run the following command:
 
         python3 AverageET.py -h
         
-Recommended options:
+Recommended optional arguments:
 
     -g to generate quick-look graphs of your output data
     -v for more detailed command line output and error messages
