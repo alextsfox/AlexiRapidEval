@@ -33,9 +33,7 @@ Recommended options:
     -g to generate quick-look graphs of your output data
     -v for more detailed command line output and error messages
     
-*Further Questions?*
-
-Check out the wiki: https://github.com/alextsfox/AlexiRapidEval/wiki
+*Further Questions?*   Check out the wiki: https://github.com/alextsfox/AlexiRapidEval/wiki
         
          
 
