@@ -1,7 +1,6 @@
 #!/usr/bin/bash
-
 # Path to the data file downloaded from fluxnet
-flux_file=US-UMd.csv
+flux_dir=.
 
 # Directory containing ALEXI/ET data files
 et_dir=ALEXI_DATA
@@ -28,15 +27,17 @@ end_year=2016
 vars=(TA_F RECO_NT_VUT_25)
 
 # Fluxnet site ID to compare
-# Usage: (<siteID_1> <siteID_2>...)
-sites=(US-UMd)
+# Usage: (<siteID_1> <siteID_2>...) OR (<siteID_file.txt>)
+sites=(sitesToUse.txt)
 
+# ${sites[*]} \
 python3 AverageET.py \
 $et_dir/$et_prefix \
-$flux_file $out_dir \
+$flux_dir $out_dir \
 -y $start_year $end_year \
 -b $b \
--s ${sites[*]} \
+-s ${sites[*]} US-UMd-3 \
 -vars ${vars[*]} \
 -f -g --verbose
 
+echo -e '\033[0m'

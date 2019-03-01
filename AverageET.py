@@ -19,48 +19,49 @@ from calendar import isleap
 from time import time
 import sys
 
-# import matplotlib.animation as anim
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 
-# gt: geotransform, formatted as (ULLon, X Pixel Res (deg), ULX, ULLat, ULY, Y Pixel Res (deg))
+# given a lat/lon and a geotransform, extract the yx coordinates of the location
 def getYXValsFromLatLon(gt, lat, lon, counter):
-	# gt = geotransform, 6-tuple
-	# lat = float
-	# lon = float
-	# counter = int, used only for verbose output
-
-	x = (lon - gt[0])//gt[1]
+	# gt: geotransform, 6-tuple
+	# lat: float
+	# lon: float
+	# counter: int, used only for verbose output
 
 	#note that gt[5], the YRes, is a negative value. That's why this works the same as finding x
+	x = (lon - gt[0])//gt[1]
 	y = (lat - gt[3])//gt[5]
 
-	# returns x,y because data comes as x=lon, y=lat, and we use lat/lon not lon/lat
-
 	if args.verbose and counter == 0:
-		print('~~~~~~~~~~~~~~~')
-		print('Site at coordinates {} is located at point x={}, y={} in the image'.format((lat,lon), int(x), int(y)))
+		print()
+		print('Site at coordinates {red}{coords}{end} is located at point {red}x={x}, y={x}{end} in the image'.format(coords=(lat,lon), x=int(x), y=int(y),red=color.DARKCYAN,end=color.END))
 		print()
 
+	# returns (y,x) because data comes as x=lon, y=lat, and we use lat/lon not lon/lat
 	return int(y), int(x)
-
-# given a tile #, returns the LLLat/LLLon association with that tile
-def tile2LatLon(tile):
-	# tile = int
-
-	row = tile//24
-	col = tile - (row*24)
-	lat = (75. - row*15.) - 15.
-	lon = (col*15. - 180.) - 15.
-	return lat, lon
 
 # checks to see if a given set of coordinates is within the bounds of a raster file
 def inRaster(raster, gt, coords):
-	# raster = raster data
-	# gt = geotransform, 6-tuple
-	# coords = [lat, lon]
+	# raster: raster data object
+	# gt: geotransform, 6-tuple
+	# coords: (lat, lon)
 
 	Rlon = gt[0] + (raster.RasterXSize * gt[1])
 	Llat = gt[3] + (raster.RasterYSize * gt[5])
 	UR, LL = np.array([gt[3], Rlon]), np.array([Llat, gt[0]])
+
+	# Returns False if the input coordinates are Nort or East of the Upper Right Corner
+	# Returns False if the input coordinate are South or West of the Lower Left Corner
 	if not np.all(UR > coords):
 		return False
 	elif not np.all(LL < coords):
@@ -71,73 +72,120 @@ def inRaster(raster, gt, coords):
 # given a raster, restricts it to a box centered around a certain pixel.
 # for even sized boxes, snaps to the left.
 def restrictToBox(raster, siteY, siteX, buff, flip, counter):
-	# raster = raster data
-	# siteY, siteX, boxY, boxX = ints
+	# raster: raster data object
+	# siteY, siteX: ints
+	# buff: int
 	# flip = bool
-	# returns a 2d array
-	# counter = int, used only for verbose output
+	# counter: int, used only for verbose output
 
+	# flips the image if necessary
 	if flip:
 		rasterArray = np.flip(raster.ReadAsArray(),axis=0)
 
+	# adds buffer pixels around the target site
 	rasterArray = rasterArray[siteY - buff : siteY + buff + 1,
-							  siteX - buff : siteX + buff + 1]
-
-	U =  siteY + buff + 1
-	Le = siteX - buff
-	Lo = siteY - buff
-	R = siteX + buff + 1		    		  
+							  siteX - buff : siteX + buff + 1]		    		  
 
 	rasterArray[rasterArray == -9999] = np.nan
 
 	if args.verbose and counter == 0:
-		print("~~~~~~~~~~~~~~~")
-		print('Restricted to box with corners (formatted as (x,y)) at: \n UL = ({Le},{U}), UR = ({R},{U}) \n LL = ({Le},{Lo}), LR = ({R},{Lo})'.format(U=U,Le=Le,Lo=Lo,R=R))
-		print()
+		U  = siteY + buff
+		Le = siteX - buff
+		Lo = siteY - buff
+		R  = siteX + buff
 
+		print()
+		print('Restricted to box with corners (formatted as (x,y)) at: \n {dc}UL = ({Le},{U}), UR = ({R},{U}) \n LL = ({Le},{Lo}), LR = ({R},{Lo}){end}'.format(U=U,Le=Le,Lo=Lo,R=R,dc=color.DARKCYAN,end=color.END))
+		print()
+		print('Sub-raster to pull from:\n', color.DARKCYAN, rasterArray, color.END)
+
+	# returns a 2d array of the raster, cropped around the buffer pixels
 	return rasterArray
 
 # given a site_ID and year, returns a daily list of variable values to plot
 def getFluxData(site_ID, years, *fluxVars):
-	# site_ID = string
-	# year = int
-	# fluxVars = strings representing variable names
-	# returns a pandas dataframe of the fluxnet data for that year at that site of those variables, indexed by doy (365 days)
+	# site_ID: string
+	# years: tuple of ints
+	# fluxVars: strings representing variable names
 
 	# yyyymmdd
 
 
 	# retrieves the the daily fluxnet2015 data file at the specified site ID
-	path = args.Flux_File
-	fileName = glob.glob(args.Flux_File)
+	path     = os.path.join(args.fluxDir, '{}.csv'.format(site_ID))
+	fileName = glob.glob(path)
 
-	fileName = fileName[0]
+	try:
+		fileName = fileName[0]
+
+	# if no file is found, return an empty dataframe of the correct size
+	except IndexError as err:
+
+		print('{red}WARNING: Could not find file {}, skipping flux data collection for this site{end}'.format(path,red=color.RED,end=color.END))
+		FluxDict        = {}
+		FluxDict['DOY'] = []
+		for var in fluxVars:
+			FluxDict[var] = []
+
+		for year in years:
+			if isleap(year):
+
+				FluxDict['DOY'] = FluxDict['DOY'] + [d for d in range(1,367)]
+				for var in fluxVars:
+					FluxDict[var] = FluxDict[var] + [np.nan for d in range(1,367)]
+
+			else:
+
+				FluxDict['DOY'] = FluxDict['DOY'] + [d for d in range(1,366)]
+				for var in fluxVars:
+					FluxDict[var] = FluxDict[var] + [np.nan for d in range(1,366)]
+
+			numDays = len(FluxDict['DOY'])
+			FluxDict['DOY'] = [day for day in range(1,numDays+1)]
+
+		FluxData = pd.DataFrame.from_dict(FluxDict)
+		FluxData = FluxData.set_index('DOY')
+		FluxData = FluxData.reindex(columns=[var for var in fluxVars])
+		
+		return FluxData
+
 	if args.verbose:
-		print("~~~~~~~~~~~~~~~")
-		print('Found Flux data file: ', fileName.split('/')[-1])
 
-	startDate = int('{:04d}{:04d}'.format(years[0],101))
-	endDate   = int('{:04d}{:04d}'.format(years[-1],1231))
-	
-	# read a csv file with flux data
-	# access the timestamp column and the needed variables columns
-	# reindex by the timestamp column
-	# crop to the dates we need
-	# reindex again, but by DOY for consistancy with other dataframes used in script
-	FluxData = (pd.read_csv(fileName)
-				  .loc[:,['TIMESTAMP',*fluxVars]]
-				  .set_index('TIMESTAMP')
-				  .loc[startDate:endDate])
+			print()
+			print('\nFound Flux data file: ', color.DARKCYAN, fileName.split('/')[-1], color.END)
 
-	# account for leap year, don't set to 365 days, just the length of that year.
-	FluxData['DOY'] = range(1,len(FluxData.index)+1)
-	FluxData = FluxData.set_index('DOY')
+			# January 1 of year 1 to Dec. 31 of the final year (inclusive)
+			startDate = int('{:04d}{:04d}'.format(years[0],101))
+			endDate   = int('{:04d}{:04d}'.format(years[-1]+1,101))
+			
+			# read a csv file with flux data
+			# access the timestamp column and the needed variables columns
+			# reindex by the timestamp column
+			# crop to the dates we need
+			# reindex again, but by DOY for consistancy with other dataframes used in script
+			FluxData = (pd.read_csv(fileName)
+						  .loc[:,['TIMESTAMP',*fluxVars]]
+						  .set_index('TIMESTAMP')
+						  .loc[startDate:endDate])
 
-	FluxData[FluxData == -9999] = np.nan
+			# to account for leap year, set the DOY column to the length of data pulled from 1/1 to 12/31
+			FluxData['DOY'] = range(1,len(FluxData.index)+1)
+
+			FluxData = FluxData.set_index('DOY')
+
+			FluxData[FluxData == -9999] = np.nan
+			
+			# returns a dataframe of the data from the Flux File
+			return FluxData
+
+		
+
 	
-	return FluxData
-	
+
+# a pretty progress bar
 def update_progress(progress):
+	# progress: float/int
+
     barLength = 63 # Modify this to change the length of the progress bar
     status = ""
     if isinstance(progress, int):
@@ -158,35 +206,36 @@ def update_progress(progress):
 
 def main():
 
+	# loop through locations
 	for i in range(len(LOCS)):
 
 		if args.verbose:
 			print()
-			print('\n\nNow processing site {}'.format(SITE_IDS[i]))
+			print('\n\n{}Now processing site {}{}'.format(color.BOLD ,SITE_IDS[i], color.END))
+			print('~~~~~~~~~~~~~~~~~~~~~~~~')
 		
 		# used for giving specific verbose output options
-		counter = 0
+		errorMessages = []
+		counter       = 0
+		hdrWarn       = 0
+		notFound      = 0
+		outOfRaster   = 0
 
-		vals = []
-		errorMessages=[]
-		hdrWarn = 0
-		notFound = 0
-		outOfRaster = 0
-		yearCol=[]
-		doyCol=[]
+		# for storing data
+		vals    = []
+		yearCol = []
+		doyCol  = []
+
 		for year in years:
-			# in case of leap years
+			# loop through 366 in case there's a leao year
 			for doy in range(1,367):
 
 				# retrieve the ET filepath. Each .dat file has an associated header file.
 				date = "%d%03d" % (year, doy)
-				filename = '{}_{:04d}{:03d}.dat'.format(args.ET_Path, year, doy)
+				filename = '{}_{:04d}{:03d}.dat'.format(args.etPathAndPrefix, year, doy)
 
 				# average ET values within a box
-				if os.path.exists(filename):
-
-					# get geotransform from the raster file and find the YX of the site given lat/lon
-					
+				if os.path.exists(filename):			
 					# catch missing .hdr files
 					gdal.UseExceptions()
 					try:
@@ -215,13 +264,11 @@ def main():
 						vals.append(np.nan)
 						if counter == 1:
 							errorMessages.append('Error: Site_ID %s at %s is not within the bounds of the raster file.' % (SITE_IDS[i], LOCS[i]))
-							counter += 1
+							counter     += 1
 							outOfRaster += 1
 
 					# a nice looking progress bar.	
 					update_progress(doy/(366*len(years)))
-
-					# will be added to the .csv file
 					
 					 
 				else:
@@ -232,11 +279,12 @@ def main():
 						else:
 							errorMessages.append("Error: I couldn't find file {}".format(filename))
 						notFound += 1
-				
+
+				# generate the year, doy
 				if doy != 366:
 					yearCol.append(year)
 					doyCol.append(doy)
-				if doy == 366 and isleap(year):
+				elif doy == 366 and isleap(year):
 					yearCol.append(year)
 					doyCol.append(doy)
 
@@ -244,43 +292,41 @@ def main():
 		errorFile = open('errors/{}_{}_Errors.txt'.format(time(),SITE_IDS[i]), 'w')
 		for error in errorMessages:
 			errorFile.write(error)
-
-		print()
-		print()
-		print('~~~~~~~~~~~~~~~')
-		print('Saved errors/{}_{}_Errors.txt'.format(time(),SITE_IDS[i]))
-		print('{} errors were encountered when processing raster data:'.format(len(errorMessages)))
+		print('\n')
+		print('{red}{} errors were encountered when processing raster data:'.format(len(errorMessages),red=color.RED))
 		print('    {} missing .hdr files'.format(hdrWarn))
 		print('    {} raster files could not be found'.format(notFound))
 		print('    {} locations were not within the bounds of the raster files'.format(outOfRaster))
-		print()
-
+		print('Saved output log to errors/{}_{}_Errors.txt{end}'.format(time(),SITE_IDS[i], end=color.END))
+		
 		# create a pandas dataframe of the averaged ET values over time, print to CSV
-		ETdct = {'DOY': range(1,len(vals)+1), 'ET': vals}
+		
+		ETdct  = {'DOY': range(1,len(vals)+1), 'ET': vals}
 		ETData = pd.DataFrame.from_dict(ETdct)
 		#ETData = ETData.set_index('DOY')
 		
 		# get a pandas dataframe of the needed fluxtower variable data
+
 		fluxData = getFluxData(SITE_IDS[i], years, *fluxVars)
 
 		# dataframe comparing ALEXI and Fluxtower data
 		ET_and_Flux_Compared = pd.DataFrame()
 		ET_and_Flux_Compared['Year'] = yearCol
-		ET_and_Flux_Compared['DOY'] = doyCol
-		ET_and_Flux_Compared['ET'] = ETData['ET']
+		ET_and_Flux_Compared['DOY']  = doyCol
+		ET_and_Flux_Compared['ET']   = ETData['ET']
 		for var in fluxVars:
 			ET_and_Flux_Compared[var] = fluxData[var]
 
 		# save to csv
 		ET_and_Flux_Compared = ET_and_Flux_Compared.fillna(-9999).astype(int)
-		ET_and_Flux_Compared.to_csv(os.path.join(args.Out_Path,'{0}_{1}px.csv'.format(SITE_IDS[i], args.buff)), index=False)
+		ET_and_Flux_Compared.to_csv(os.path.join(args.outPath,'{0}_{1}px.csv'.format(SITE_IDS[i], args.buff)), index=False)
 		if args.verbose:
-			print("File {} saved successfully".format(os.path.join(args.Out_Path,'{0}_{1}px.csv'.format(SITE_IDS[i],args.buff))))
+			print("\n{green}File {} saved successfully{end}".format(os.path.join(args.outPath,'{0}_{1}px.csv'.format(SITE_IDS[i],args.buff)),green=color.GREEN,end=color.END))
 
-		# generage figures
-		if args.genfigs:
+		# generate figures
+		if args.genFigs:
 
-			figPath = os.path.join(args.Out_Path, 'fig')
+			figPath = os.path.join(args.outPath, 'fig')
 
 			plt.plot(ETData.index ,ETData['ET'], linewidth=2, c=(1,0,0))
 			for var in fluxVars:
@@ -295,33 +341,37 @@ def main():
 			plt.clf()
 
 			if args.verbose:
-				print("Figure {} saved successfully".format(os.path.join(figPath,'{0}_{1}px.png'.format(SITE_IDS[i], args.buff))))
+				print("{green}Figure {} saved successfully{end}".format(os.path.join(figPath,'{0}_{1}px.png'.format(SITE_IDS[i], args.buff)),green=color.GREEN,end=color.END))
 
 if __name__ == '__main__':
 
 	#parsing arguments
-	parser = argparse.ArgumentParser()
-	parser.add_argument("ET_Path", help="Directory containing ET data files and their associated header files. By default the working directory. Files must end in yyyyddd format.")
-	parser.add_argument("Flux_File", help="File containing daily flux tower CSV data")
-	parser.add_argument("Out_Path", help="Directory to output files to. By default creates a subdirectory in the working directory.")
+	p = argparse.ArgumentParser()
+	p.add_argument("etPathAndPrefix", help="Directory containing ET data files and their associated header files. Files must end in yyyyddd format.")
+	p.add_argument("fluxDir", help="Directory containing flux data")
+	p.add_argument("outPath", help="Directory to output files to. By default creates a subdirectory in the working directory.")
 
-	parser.add_argument("-b", "--buff", type=int, help="Buffer, in number of pixels. Default 0.")
-	parser.add_argument("-f", "--flip", action="store_true", help="If the image data is upside down, this option flips the image when performing computations.\n ")
-	parser.add_argument("-g", "--genfigs", action="store_true", help="Program will save figures to output directory\n ")
-	parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+	p.add_argument("-b", "--buff", type=int, help="Buffer, in number of pixels. Default 0.")
+	p.add_argument("-f", "--flip", action="store_true", help="If the image data is upside down, this option flips the image when performing computations.\n ")
+	p.add_argument("-g", "--genFigs", action="store_true", help="Program will save figures to output directory\n ")
+	p.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
 	
-	req = parser.add_argument_group('Named required arguments')
+	req = p.add_argument_group('Named required arguments')
 	req.add_argument("-y", "--years", required=True, nargs='+', type=int, help="Year range (inclusive). Usage: <start_year> <end_year>")
 	req.add_argument("-vars", "--variables", required=True, nargs='+', help='Variable names to load from flux data files. Usage: <var1> <var2>...')
-	req.add_argument("-s", "--sites", required=True, nargs='+', help="Fluxnet Site IDs to evaluate, separated by spaces. Usage: list of sites <site1> <site2>... OR a sigle text file containing site IDs <site_list.txt>")
+	req.add_argument("-s", "--sites", required=True, nargs='+', help="Fluxnet Site IDs to evaluate, in a .txt file line-by-line, OR directly in the command line, separated by spaces. Usage: <siteFile.txt> OR <site1> <site2>... OR  a combination of both")
+
+	# mutex = p.add_argument_group('At least one of the following must be used:')
+	# req.add_argument("-sf", "--sites", help="Fluxnet Site IDs to evaluate, stored line-by-lin in a text file.")
+	# req.add_argument("-sl", "--sites", nargs='+', help="Fluxnet Site IDs to evaluate, separated by spaces. Usage: list of sites <site1> <site2>... ")
 	
-	args = parser.parse_args()
+	args = p.parse_args()
 
-	#assigning variables
-	if not os.path.exists(args.Out_Path):
-		os.makedirs(args.Out_Path)
-		print(args.Out_Path)
+	if not os.path.exists(args.outPath):
+		os.makedirs(args.outPath)
+		print(args.outPath)
 
+	# sets buffer to zero by default
 	if args.buff is None:
 		args.buff = 0
 
@@ -332,53 +382,52 @@ if __name__ == '__main__':
 		if FLIP:
 			print('\nFlipping images...')
 		else:
-			print("Will not be flipping images...")
-
-	try:
-		sitesToUse = open(args.sites, 'r')
-		sitesToUse = sitesToUse.readlines()
-
-		# removing \n character
-		for i in range(len(sitesToUse)):
-			if sitesToUse[-1] == '\n':
-				sitesToUse[i] = sitesToUse[:-1]
-
-		print('Opening file {}'.format(args.sites))
-
-	except TypeError as err:
-		sitesToUse = [site for site in args.sites]
-
-	print('Looking at sites {}'.format(sitesToUse))
+			print("\nWill not be flipping images...")
 
 	fluxVars = args.variables
 
 	# list of years
 	years = [i for i in range(args.years[0], args.years[1]+1)]
 
-	# retrieve list of fluxnet sites, reindex by site id
-	SITELIST_FILENAME = 'Fluxnet_site_list.csv'
-	sitesDF = pd.read_csv(SITELIST_FILENAME)
-	
-	# if given, limit analysis to user specified sites.
-	sitesDF = sitesDF.set_index('SITE_ID')
-	if args.sites is not None:	
-		sitesDF = sitesDF.loc[args.sites]#sitesDF = sitesDF[sitesDF['SITE_ID'].str.match(site)]
-	sitesDF = sitesDF.reset_index()
+	sitesToUse = []
+	for siteName in args.sites:
+		try:
+			sitesFromFile = open(siteName, 'r')
+			sitesFromFile = sitesFromFile.readlines()
 
+			# removing \n character
+			for i in range(len(sitesFromFile)):
+				if sitesFromFile[i][-1] == '\n':
+					sitesFromFile[i] = sitesFromFile[i][:-1]
+
+				sitesToUse.append(sitesFromFile[i])
+
+		except FileNotFoundError as err:
+			sitesToUse.append(siteName)
+
+	# retrieve list of fluxnet sites, filter out the ones we need
+	SITELIST_FILENAME = 'Fluxnet_site_list.csv'
+	sitesDF       = pd.read_csv(SITELIST_FILENAME)
+	sitesDF.index = sitesDF['SITE_ID']
+	sitesDF       = sitesDF.loc[sitesToUse]
+	sitesDF.index = range(len(sitesDF.index))
+	sitesDF       = sitesDF.reindex(columns=['SITE_ID','SITE_NAME','LOCATION_LAT','LOCATION_LONG'])
+	
 	if args.verbose:
-		print('Using variables {}...'.format(fluxVars))
-		print('\n',sitesDF,'\n')
+		print('\nUsing the following variables:\n {}{}{}'.format(color.DARKCYAN, '   '.join(fluxVars), color.END))
+		print('\n'+color.DARKCYAN,sitesDF,color.END+'\n')
 
 	# works with either version of pandas, using either depricated .values or the newer .to_numpy()
 	try:
 		sitesDF = sitesDF.to_numpy()
 	except AttributeError as err:
 		sitesDF = sitesDF.values
+	
 
 	SITE_IDS = sitesDF[:,0]
-	LOCS = sitesDF[:,2:4]
 	SITE_NAMES = sitesDF[:,1]
-
+	LOCS = sitesDF[:,2:4]
+	
 	main()
 
 
